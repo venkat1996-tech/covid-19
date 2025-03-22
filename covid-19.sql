@@ -1,12 +1,14 @@
 
--- looking at covid-19 daily cases idintifed date wise to how many cases are registered throuth out country (Top- new cases registered)
+-- Query 1: Retrieve the highest new COVID-19 cases recorded per day
 
 select date_reported, country, new_cases, new_deaths from daily_data
 order by new_cases desc;
 
+-- Query 2: Find the first and last recorded date in the dataset
+
 select min(date_reported) as first_date_reported, max(date_reported) as last_date_reported from daily_data;
 
--- To identifed to top country is covid-19 deaths accoured in total dayes ( 2020-01-04 to 2021-09-06)
+-- Query 3: Identify the top 10 countries with the highest total COVID-19 deaths
 
 select country, count(distinct date_reported) as num_of_day, sum(new_cases) as total_new_cases, sum(new_deaths) as total_new_deaths
 from daily_data
@@ -15,7 +17,7 @@ order by  total_new_deaths desc
 limit 10;
 
 
-#02 monthly Covid-19 death cases & country
+-- Query 4: Monthly COVID-19 deaths per country
 
 select country, concat(monthname(date_reported), ' ',year(date_reported)) as month,
 sum(new_deaths) as total_deaths_monthly
@@ -23,7 +25,7 @@ from daily_data
 group by country, concat(monthname(date_reported), ' ',year(date_reported))
 order by total_deaths_monthly desc;                                              -- aggrigates new death per country on the monthly basis
 
--- countries with the highest deaths rate (deaths per cases)
+-- Query 5: Countries with the highest death rate (deaths per cases)
 
 select country,
 sum(new_cases) as total_cases,
@@ -34,7 +36,7 @@ group by country
 having total_cases >1000000
 order by deaths_per_rate desc;
 
--- Daily Growth Rate of Cases
+-- Query 6: Daily Growth Rate of COVID-19 Cases
 select
 country,
 date_reported,
@@ -45,7 +47,7 @@ round(
 from daily_data
 order by daily_groth_rate;
 
--- Countries with the Fastest Case Increase (Last 7 Days)
+-- Query 7: Countries with the Fastest Case Increase (Last 7 Days)
 
 select 
 country,
@@ -79,8 +81,7 @@ desc daily_data;
 
 
 
-
--- Global Daily Cases Trend
+-- Query 8: Global Daily Cases Trend
 
 
 select date_reported,
@@ -105,8 +106,7 @@ from daily_data
 group by country, who_region
 order by total_new_cases desc;
 
-
--- to identifed rank wise to deaths happening world wise
+-- Query 9: Identifying the rank of deaths worldwide on a monthly basis
 
 select 
 country, 
@@ -119,7 +119,7 @@ where concat(monthname(date_reported) , ' ', year(date_reported)) in ('june 2020
 group by country, concat(monthname(date_reported) , ' ', year(date_reported))
 order by total_deaths desc;
 
--- Countries, monthly wise with the Highest Recovery Rate
+-- Query 10: Countries with the highest recovery rate (monthly)
 
 select country, concat(monthname(date_reported), ' ', year(date_reported)) as monthly_recovered_casese,
 sum(new_cases) as monthly_cases, sum(new_deaths) as monthly_deaths,
@@ -129,7 +129,7 @@ where new_cases > 1000
 group by country, concat(monthname(date_reported), ' ', year(date_reported))
 order by recovered_cases_rate desc;
 
--- Countries with the Highest Deaths in a Single Day
+-- Query 11: The highest number of deaths recorded in a single day
 
 select
 country,
@@ -138,7 +138,7 @@ new_deaths as highest_deaths_cases
 from daily_data
 where new_deaths = (select max(new_deaths) from daily_data);       -- shows Highest number of deaths in a single day in Ecuador
 
--- 7-Day Moving Average of New Cases Per Country
+-- Query 12: 7-Day Moving Average of New Cases Per Country
 
 select
 country,
@@ -153,7 +153,7 @@ from daily_data
 where country = 'india'
 order by new_cases ;
 
--- Global Mortality Rate Trend Over Time
+-- Query 13: Global Mortality Rate Trend Over Time
 
 select 
 date_reported,
@@ -165,7 +165,7 @@ group by date_reported
 order by date_reported;
 
 
--- Countries That Controlled the Spread (Declining Cases)
+-- Query 14: Countries That Controlled the Spread (Declining Cases)
 
 select
 country,
@@ -180,7 +180,7 @@ end as cases_trend                   -- Identifies whether a country’s new cas
 from daily_data
 order by new_cases;
 
--- Peak Cases per Country (Highest Cases in a Single Day)
+-- Query 15: Peak Cases per Country (Highest Cases in a Single Day)
 
 select
 country,
@@ -190,7 +190,7 @@ from daily_data
 order by new_cases desc;
 
 
--- the First Reported Case for Each Country
+-- Query 16: The First Reported Case for Each Country
 
 select
 country,
@@ -200,7 +200,7 @@ where new_cases >0
 group by country
 order by first_day_reported; 
 
--- Compare COVID-19 Waves (First, Second, Third Wave)
+-- Query 17: Compare COVID-19 Waves (First, Second, Third Wave)
 
 select
 country,
@@ -220,7 +220,7 @@ select*from daily_data;
 select*from hosp_icu_data;
 select min(date_reported) as first_date, max(date_reported) as last_date from hosp_icu_data;
 
--- looking at covid-19 cases and hospitalizations,icu patinets daily date wises
+--Query 18: Retrieve covid-19 cases and hospitalizations,icu patinets daily date wises
 select
 a.date_reported,
 b.country_code,
@@ -235,7 +235,7 @@ where a.new_deaths >1000 and b.covid_new_hospitalizations_last_7days >1000 and a
 order by 
 b.covid_new_icu_admissions_last_7days desc;
 
--- looking at top country total hospitalizations and also cases, deaths patinets
+-- Query 20: Retrieve at top country total hospitalizations and also cases, deaths patinets
 
 select
 a.country,
